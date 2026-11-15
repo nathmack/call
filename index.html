@@ -24,16 +24,19 @@
   // Hands a phone number to the JustCall app or the phone's dialler.
   // The address ends in #j+61400111222 (JustCall) or #t+61400111222 (phone dialler).
   // The number sits after the #, so it stays on the phone and is never sent to this page's server.
-  (function () {
+  function run() {
     var m = /^#([jt])(\+\d{7,15})$/.exec(location.hash), msg = document.getElementById("msg"), go = document.getElementById("go");
-    if (!m) { msg.textContent = "No phone number was passed to this page."; return; }
+    if (!m) { msg.textContent = "No phone number was passed to this page."; go.hidden = true; return; }
     var href = (m[1] === "j" ? "justcall://" : "tel:") + m[2];
     msg.textContent = m[2];
     go.href = href;
     go.textContent = m[1] === "j" ? "Call with JustCall" : "Call with Phone";
     go.hidden = false;
     location.href = href; // straight on; the button is there if the phone wants a tap first
-  })();
+  }
+  run();
+  // If the phone reuses this tab for the next call, pick up the new number instead of keeping the old one.
+  window.addEventListener("hashchange", run);
 </script>
 </body>
 </html>
